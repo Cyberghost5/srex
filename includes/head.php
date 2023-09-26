@@ -7,6 +7,7 @@
 		<title>Srex Web</title>
 		<link rel="stylesheet" href="./styles/fonts.css" />
 		<link rel="stylesheet" href="./styles/style.css" />
+		<link rel="stylesheet" href="./styles/alerts.css" />
 		<?php
 		$css_file_name1 = pathinfo($_SERVER["SCRIPT_NAME"]);
 		$file = $_SERVER['STYLE_URL'].'/'.$css_file_name1['filename'].'.css';

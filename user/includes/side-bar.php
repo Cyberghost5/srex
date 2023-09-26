@@ -5,50 +5,50 @@
   <nav>
     <ul>
       <li>
-        <a href="./dashboard" <?php if ($filename == 'dashboard') {	echo "class='active'"; } ?>>
-          <img src="./assets/images/dashboard.svg" alt="" color="red" />
+        <a href="./home" <?php if ($filename == 'home') {	echo "class='active'"; } ?>>
+          <img src="<?php echo $settings['site_url']; ?>assets/images/dashboard.svg" alt="" color="red" />
           Dashboard
         </a>
       </li>
       <li>
         <a href="./shipments" <?php if ($filename == 'shipments') {	echo "class='active'"; } ?>>
-          <img src="./assets/images/shipments.svg" alt="" />
+          <img src="<?php echo $settings['site_url']; ?>assets/images/shipments.svg" alt="" />
           My shipments
         </a>
       </li>
       <li>
         <a href="./orders" <?php if ($filename == 'orders') {	echo "class='active'"; } ?>>
-          <img src="./assets/images/orders.svg" alt="" />
+          <img src="<?php echo $settings['site_url']; ?>assets/images/orders.svg" alt="" />
           My orders
         </a>
       </li>
       <li>
         <a href="./wallet" <?php if ($filename == 'wallet') {	echo "class='active'"; } ?>>
-          <img src="./assets/images/wallet.svg" alt="" />
+          <img src="<?php echo $settings['site_url']; ?>assets/images/wallet.svg" alt="" />
           Wallet
         </a>
       </li>
       <li>
         <a href="./charges" <?php if ($filename == 'charges') {	echo "class='active'"; } ?>>
-          <img src="./assets/images/wallet.svg" alt="" />
+          <img src="<?php echo $settings['site_url']; ?>assets/images/wallet.svg" alt="" />
           Pending charges
         </a>
       </li>
       <li>
         <a href="./address" <?php if ($filename == 'address') {	echo "class='active'"; } ?>>
-          <img src="./assets/images/address.svg" alt="" />
+          <img src="<?php echo $settings['site_url']; ?>assets/images/address.svg" alt="" />
           My addresses
         </a>
       </li>
       <li>
         <a href="./invite" <?php if ($filename == 'invite') {	echo "class='active'"; } ?>>
-          <img src="./assets/images/money.svg" alt="" />
+          <img src="<?php echo $settings['site_url']; ?>assets/images/money.svg" alt="" />
           Invite & Earn
         </a>
       </li>
       <li>
         <a href="./faq" <?php if ($filename == 'faq') {	echo "class='active'"; } ?>>
-          <img src="./assets/images/faqs.svg" alt="" />
+          <img src="<?php echo $settings['site_url']; ?>assets/images/faqs.svg" alt="" />
           FAQs
         </a>
       </li>
@@ -56,8 +56,8 @@
   </nav>
   <div class="logout">
     <li>
-      <a href="./login">
-        <img src="./assets/images/logout.svg" alt="" />
+      <a href="logout">
+        <img src="<?php echo $settings['site_url']; ?>assets/images/logout.svg" alt="" />
         Log out
       </a>
     </li>

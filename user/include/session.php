@@ -1,9 +1,8 @@
 <?php
-  session_start();
   include 'include/conn.php';
-  ob_start();
+  session_start();
 
-  if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+      if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
   $ip_address = $_SERVER['HTTP_CLIENT_IP'];
   }elseif (!empty($_SERVER['HTTP_FORWARDED_FOR'])) {
   $ip_address = $_SERVER['HTTP_FORWARDED_FOR'];
@@ -14,7 +13,9 @@
 $device_info = $_SERVER['HTTP_USER_AGENT'];
 $today = date('Y-m-d');
 
-if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
+  
+  // Probably has issues
+  if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
     $conn = $pdo->open();
 
     try{
@@ -38,7 +39,6 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
 					$stmt = $conn->prepare("SELECT * FROM users WHERE id=:id");
                     $stmt->execute(['id'=>$_SESSION['user']]);
                     $user = $stmt->fetch();
-                    echo "<script>window.location.assign('user/home')</script>";
 				}
 			}
 			else{
@@ -47,34 +47,34 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
 				unset($_SESSION['admin']);
             	setcookie("username", "", time() - 3600, "/");
             	setcookie("password", "", time() - 3600, "/");
-		        echo "<script>window.location.assign('login')</script>";
+		        echo "<script>window.location.assign('../login')</script>";
 			}
 		}
 		elseif ($row['status'] == 2) {
 			$_SESSION['block'] = 'This account has been blocked for violating our <a href="terms-conditions">Terms & Conditions</a> and cannot be used anymore! If you think otherwise
 			do <a href="contact">write</a> to us providing your username and we could help resolve this.';
 			unset($_SESSION['user']);
-				unset($_SESSION['admin']);
+			unset($_SESSION['admin']);
         	setcookie("username", "", time() - 3600, "/");
         	setcookie("password", "", time() - 3600, "/");
-		    echo "<script>window.location.assign('login')</script>";
+		    echo "<script>window.location.assign('../login')</script>";
 		}
 		else{
 			$_SESSION['error'] = 'Account not activated. Check your email for activation link.';
 			unset($_SESSION['user']);
-				unset($_SESSION['admin']);
+			unset($_SESSION['admin']);
         	setcookie("username", "", time() - 3600, "/");
         	setcookie("password", "", time() - 3600, "/");
-		    echo "<script>window.location.assign('login')</script>";
+		    echo "<script>window.location.assign('../login')</script>";
 		}
 	}
 	else{
-		//$_SESSION['error'] = 'Username not found';
+		$_SESSION['error'] = 'Username not found';
 		unset($_SESSION['user']);
-				unset($_SESSION['admin']);
+		unset($_SESSION['admin']);
     	setcookie("username", "", time() - 3600, "/");
     	setcookie("password", "", time() - 3600, "/");
-		echo "<script>window.location.assign('login')</script>";
+		echo "<script>window.location.assign('../login')</script>";
 	}
 	
     }
@@ -89,8 +89,7 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
 }
 
   if(isset($_SESSION['admin'])){
-    header('location: admin/home');
-    echo "<script>window.location.assign('admin/home')</script>";
+    header('location: ../admin/home');
   }
 
   if(isset($_SESSION['user'])){
@@ -108,9 +107,13 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
     }
 
     $pdo->close();
+  }else {
+    unset($_SESSION['user']);
+    echo "<script>window.location.assign('../login')</script>";
+    header('location: ../login');
   }
 
-  if ('session_start()' == true) {
+    if ('session_start()' == true) {
 
   $conn = $pdo->open();
 
@@ -134,4 +137,15 @@ if(isset($_COOKIE['username']) && isset($_COOKIE['password'])){
   $pdo->close();
 
 }
+
+$conn = $pdo->open();
+try{
+  $stmt = $conn->prepare("SELECT * FROM settings WHERE id = 1");
+  $stmt->execute();
+  $settings = $stmt->fetch();
+}
+catch(PDOException $e){
+  echo "There is some problem in connection: " . $e->getMessage();
+}
+$pdo->close();
 ?>

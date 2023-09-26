@@ -5,13 +5,47 @@
 			<header-bar><?php include 'includes/top-bar.php'; ?></header-bar>
 
 			<div class="wallet">
+			<?php
+			if(isset($_SESSION['error'])){
+				echo "
+				<div class='alert alert-danger fade show'>
+				<strong>Oops! 😕</strong> <br>".$_SESSION['error']."
+				</div>
+				";
+				unset($_SESSION['error']);
+			}
+			if(isset($_SESSION['block'])){
+				echo "
+				<div class='alert alert-warning fade show'>
+				<strong>Oh-Uh! 😒</strong> <br>".$_SESSION['block']."
+				</div>
+				";
+				unset($_SESSION['block']);
+			}
+			if(isset($_SESSION['warning'])){
+				echo "
+				<div class='alert alert-warning fade show'>
+				<strong>Hugh 😒</strong><br>".$_SESSION['warning']."
+				</div>
+				";
+				unset($_SESSION['warning']);
+			}
+			if(isset($_SESSION['success'])){
+				echo "
+				<div class='alert alert-success fade show'>
+				<strong>Hurray 🥳</strong><br>".$_SESSION['success']."
+				</div>
+				";
+				unset($_SESSION['success']);
+			}
+			?>
 				<div class="card">
 					<div>
-						<img src="./assets/images/balance.svg" />
+						<img src="<?php echo $settings['site_url']; ?>assets/images/balance.svg" />
 					</div>
 					<div class="sub-grid-content">
 						<span>Your balance is</span>
-						<h3>₦ 10,000</h3>
+						<h3><?php echo $settings['currency'] ?> <?php echo number_format($user['balance'], 2, '.', ',') ?></h3>
 					</div>
 					<div onclick="handleWalletFunding()" class="grid-right right">Fund wallet</div>
 				</div>

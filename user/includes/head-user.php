@@ -3,6 +3,7 @@ include 'include/session.php';
 
 $css_file_name1 = pathinfo($_SERVER["SCRIPT_NAME"]);
 $filename = $css_file_name1['filename'];
+$userfirstletter = substr($user['firstname'], 0, 1)
 ?>
 <!DOCTYPE html>
 	<html lang="en">
@@ -10,13 +11,14 @@ $filename = $css_file_name1['filename'];
 			<meta charset="UTF-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 			<title><?php echo ucfirst($filename); ?> | <?php echo $settings['site_title']; ?></title>
-			<link rel="stylesheet" href="./styles/fonts.css" />
-			<link rel="stylesheet" href="./styles/style.css" />
-			<link rel="stylesheet" href="./styles/login.css" />
-			<link rel="stylesheet" href="./styles/dashboard.css" />
-			<link rel="icon" href="./assets/images/favicon.png">
-			<!-- <script src="./scripts/dashboard.js" type="text/javascript" defer></script> -->
-			<script src="./scripts/dashboard1.js" type="text/javascript" defer></script>
+			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>styles/fonts.css" />
+			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>styles/style.css" />
+			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>styles/login.css" />
+			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>styles/dashboard.css" />
+			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>styles/alerts.css" />
+			<link rel="icon" href="<?php echo $settings['site_url']; ?>assets/images/favicon.png">
+			<!-- <script src="<?php echo $settings['site_url']; ?>scripts/dashboard.js" type="text/javascript" defer></script> -->
+			<script src="<?php echo $settings['site_url']; ?>scripts/dashboard1.js" type="text/javascript" defer></script>
 			<script type="text/javascript">
 			const handleProfile = () => {
 				const body = document.querySelector('.main-body');
@@ -50,8 +52,8 @@ $filename = $css_file_name1['filename'];
 						</div>
 
 						<div class="icon-container">
-							<span class="icon"> ${firstNameLetter} </span>
-							<h4>FirstName LastName</h4>
+							<span class="icon"> <?php echo $userfirstletter; ?> </span>
+							<h4><?php echo $user['firstname'].' '.$user['lastname']; ?></h4>
 						</div>
 						<form action="">
 							<label htmlFor="email">Email address</label>
@@ -59,6 +61,7 @@ $filename = $css_file_name1['filename'];
 								type="email"
 								name="email"
 								id="email"
+								value="<?php echo $user['email']; ?>"
 								placeholder="srexuser@gmail.com"
 							/>
 							<label htmlFor="email">Phone number</label>
@@ -66,6 +69,7 @@ $filename = $css_file_name1['filename'];
 								type="tel"
 								name="phone"
 								id="phone"
+								value="<?php echo $user['contact_info']; ?>"
 								placeholder="+2349087392038"
 							/>
 							<label>Account type</label>
@@ -73,18 +77,18 @@ $filename = $css_file_name1['filename'];
 								<span>
 									<label htmlFor="personal">
 										<input type="radio" name="accountType" id="personal" />
-										Personal</label
-									>
+										Personal
+									</label>
 								</span>
 								<span>
 									<label htmlFor="business">
 										<input type="radio" name="accountType" id="business" />
-										Business</label
-									>
+										Business
+									</label>
 								</span>
 							</div>
 							<label htmlFor="email">Password</label>
-							<input type="password" name="password" id="password" placeholder="****************" />
+							<input type="password" name="password" id="password" value="<?php echo $user['password']; ?>" placeholder="****************" />
 							<span>Change Password</span>
 
 							<button class="button">Save</button>

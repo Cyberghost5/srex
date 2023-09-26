@@ -140,13 +140,13 @@ const handleWalletFunding = () => {
 				</svg>
 			</div>
 
-			<form action="">
+			<form action="flutterwave" method="post">
 				<label htmlFor="amount">Amount</label>
 				<input type="number" name="amount" id="amount" placeholder="Enter amount to fund wallet with" />
 
 				<span>1.5% charge is included.</span>
 
-				<button class="button">Fund</button>
+				<button class="button" name="pay">Fund</button>
 			</form>
 			<div></div>
 		</aside>

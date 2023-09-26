@@ -71,27 +71,47 @@
 						<span>AMOUNT</span>
 						<span>EST. DELIVERY DATE</span>
 					</div>
-					<div class="list-content">
-						<span>Name Surname <span>State country</span></span>
-						<span>Name Surname <span>State country</span></span>
-						<span>TrackingID</span>
-						<span>₦Amount</span>
-						<span>new Date() <span class="success">Delivered</span> </span>
-					</div>
-					<div class="list-content">
-						<span>Name Surname <span>State country</span></span>
-						<span>Name Surname <span>State country</span></span>
-						<span>TrackingID</span>
-						<span>₦Amount</span>
-						<span>new Date() <span class="pending">In transit</span> </span>
-					</div>
-					<div class="list-content">
-						<span>Name Surname <span>State country</span></span>
-						<span>Name Surname <span>State country</span></span>
-						<span>TrackingID</span>
-						<span>₦Amount</span>
-						<span>new Date() <span class="failed">Failed</span> </span>
-					</div>
+					<?php
+
+						$conn = $pdo->open();
+
+						try{
+						$stmt = $conn->prepare("SELECT * FROM shipments WHERE userid=:userid ORDER BY id DESC");
+						$stmt->execute(['userid'=>$user['id']]);
+						$i = 0;
+						foreach($stmt as $row){
+							if ($row['status'] == 0) {
+							$status = '<span class="failed">Failed</span>';
+							}
+							if ($row['status'] == 1) {
+							$status = '<span class="success">Delivered</span>';
+							}
+							if ($row['status'] == 2) {
+							$status = '<span class="pending">In Transit</span>';
+							}
+
+							$amount = $settings['currency'].''.number_format($row['amount'], 2);
+
+
+							?>
+							<?php
+							echo"
+							<div class='list-content'>
+								<span>".$row['sender_name']." <span>".$row['sender_state']." ".$row['sender_country']."</span></span>
+								<span>".$row['receiver_name']." <span>".$row['receiver_state']." ".$row['receiver_country']."</span></span>
+								<span>".$row['tracking_id']."</span>
+								<span>".$amount."</span>
+								<span>".$row['date_delivered']." ".$status." </span>
+							</div>
+							";
+							}
+						}
+						catch(PDOException $e){
+							echo $e->getMessage();
+						}
+
+						$pdo->close();
+					?>
 				</section>
 				<div class="paginate">
 					<span> Showing 1-5 of 5 results </span>

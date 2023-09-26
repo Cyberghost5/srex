@@ -13,7 +13,7 @@ class SideBar extends HTMLElement {
 				<nav>
 					<ul>
 						<li>
-							<a href="./dashboard">
+							<a href="./home">
 								<img src="./assets/images/dashboard.svg" alt="" color="red" />
 								Dashboard
 							</a>

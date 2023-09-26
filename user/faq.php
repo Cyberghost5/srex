@@ -10,21 +10,21 @@
 					<div>
 						<div>
 							<span>Are there any additional fees or surcharges?</span
-							><img src="./assets/images/arrow-down.svg" />
+							><img src="<?php echo $settings['site_url']; ?>assets/images/arrow-down.svg" />
 						</div>
 						<span></span>
 					</div>
 					<div>
 						<div>
 							<span>Is insurance included in the shipping cost?</span
-							><img src="./assets/images/arrow-down.svg" />
+							><img src="<?php echo $settings['site_url']; ?>assets/images/arrow-down.svg" />
 						</div>
 						<span></span>
 					</div>
 					<div>
 						<div>
 							<span>What payment methods do you accept?</span
-							><img src="./assets/images/arrow-down.svg" />
+							><img src="<?php echo $settings['site_url']; ?>assets/images/arrow-down.svg" />
 						</div>
 						<span></span>
 					</div>
@@ -33,14 +33,14 @@
 					<div>
 						<div>
 							<span>Is there a minimum order value for shipping?</span
-							><img src="./assets/images/arrow-down.svg" />
+							><img src="<?php echo $settings['site_url']; ?>assets/images/arrow-down.svg" />
 						</div>
 						<span></span>
 					</div>
 					<div>
 						<div>
 							<span>Do you offer refunds or returns?</span
-							><img src="./assets/images/arrow-down.svg" />
+							><img src="<?php echo $settings['site_url']; ?>assets/images/arrow-down.svg" />
 						</div>
 						<span></span>
 					</div>
@@ -49,14 +49,14 @@
 					<div>
 						<div>
 							<span>What information is required to place an order?</span
-							><img src="./assets/images/arrow-down.svg" />
+							><img src="<?php echo $settings['site_url']; ?>assets/images/arrow-down.svg" />
 						</div>
 						<span></span>
 					</div>
 					<div>
 						<div>
 							<span>How can I contact customer support?</span
-							><img src="./assets/images/arrow-down.svg" />
+							><img src="<?php echo $settings['site_url']; ?>assets/images/arrow-down.svg" />
 						</div>
 						<span></span>
 					</div>
