@@ -2,6 +2,19 @@
   <a href="./" class="">
     <h1 class="rubikEBold">SREX</h1>
   </a>
+  <div class="bell">
+		<span>
+			<img src="<?php echo $settings['site_url']; ?>assets/images/bellMobile.svg" alt="" />
+			<small> 5 </small>
+		</span>
+		<i class="fas fa-xmark" onclick="handleBars()"></i>
+	</div>
+	<div onclick="handleProfile()" class="profile">
+		<div class="img"><?php echo $userfirstletter; ?></div>
+		<div><h6><?php echo $user['firstname'].' '.$user['lastname']; ?></h6>
+			<small>See profile</small>
+    </div>
+	</div>
   <nav>
     <ul>
       <li>
@@ -20,6 +33,12 @@
         <a href="./orders" <?php if ($filename == 'orders') {	echo "class='active'"; } ?>>
           <img src="<?php echo $settings['site_url']; ?>assets/images/orders.svg" alt="" />
           My orders
+        </a>
+      </li>
+      <li>
+        <a href="./track" <?php if ($filename == 'track') {	echo "class='active'"; } ?>>
+          <img src="<?php echo $settings['site_url']; ?>assets/images/track.svg" alt="" />
+          Tracking
         </a>
       </li>
       <li>

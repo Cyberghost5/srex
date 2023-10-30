@@ -64,7 +64,7 @@ $userfirstletter = substr($user['firstname'], 0, 1)
 								value="<?php echo $user['email']; ?>"
 								placeholder="srexuser@gmail.com"
 							/>
-							<label htmlFor="email">Phone number</label>
+							<label htmlFor="phone">Phone number</label>
 							<input
 								type="tel"
 								name="phone"

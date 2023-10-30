@@ -1,5 +1,6 @@
 <?php include 'includes/head-user.php'; ?>
 	<body class="main-dashboard">
+		<div class="mobile-overlay" onclick="handleMobileOverLay()"></div>
 		<side-bar><?php include 'includes/side-bar.php'; ?></side-bar>
 		<section class="main-body">
 			<header-bar><?php include 'includes/top-bar.php'; ?></header-bar>
@@ -46,14 +47,33 @@
 							</defs>
 						</svg>
 						<input type="search" placeholder="Search by Tracking number" />
-						<div>
+						<div class="select">
 							Shipment type:
 							<select name="type" id="type">
 								<option value="import">Import</option>
 								<option value="export">Export</option>
 							</select>
 						</div>
-						<div>
+						<div class="select">
+							Date:
+							<span>
+								<label for="date" onclick="handleDateFocus()"
+									>18 Jul - 24 Aug</label
+								>
+								<input type="date" name="date" id="date" />
+								<i class="fas fa-chevron-down"></i>
+							</span>
+						</div>
+					</div>
+					<div class="selects">
+						<div class="select">
+							Shipment type:
+							<select name="type" id="type">
+								<option value="import">Import</option>
+								<option value="export">Export</option>
+							</select>
+						</div>
+						<div class="select">
 							Date:
 							<span>
 								<label for="date" onclick="handleDateFocus()"

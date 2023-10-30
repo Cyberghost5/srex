@@ -12,7 +12,7 @@ if(isset($_POST['pay']))
       $_SESSION['error'] = 'Amount is needed';
       echo "<script>window.location.assign('wallet')</script>";
   }
-  $amount = $_POST['amount'] + 100;
+  $amount = $_POST['amount'];
   $secret_key = $settings['secret_key'];
   $trx_ref = "TRX".time();
   $redirect_url = $settings['site_url']."user/flutterwave_process";

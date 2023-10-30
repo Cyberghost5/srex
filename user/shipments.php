@@ -1,10 +1,17 @@
 <?php include 'includes/head-user.php'; ?>
 	<body class="main-dashboard">
+		<div class="mobile-overlay" onclick="handleMobileOverLay()"></div>
 		<side-bar><?php include 'includes/side-bar.php'; ?></side-bar>
 		<section class="main-body">
 			<header-bar><?php include 'includes/top-bar.php'; ?></header-bar>
 
 			<div class="shipment">
+				<div class="mobile-book">
+					<h2>Have a package to deliver?</h2>
+					<button class="button" onclick="handleShipmentBook()">
+						Book a shipment
+					</button>
+				</div>
 				<header>
 					<button onclick="handleActiveShipment('all')" class="active">
 						All shipments
@@ -46,14 +53,33 @@
 							</defs>
 						</svg>
 						<input type="search" placeholder="Search by Tracking number" />
-						<div>
+						<div class="select">
 							Shipment type:
 							<select name="type" id="type">
 								<option value="import">Import</option>
 								<option value="export">Export</option>
 							</select>
 						</div>
-						<div>
+						<div class="select">
+							Date:
+							<span>
+								<label for="date" onclick="handleDateFocus()"
+									>18 Jul - 24 Aug</label
+								>
+								<input type="date" name="date" id="date" />
+								<i class="fas fa-chevron-down"></i>
+							</span>
+						</div>
+					</div>
+					<div class="selects">
+						<div class="select">
+							Shipment type:
+							<select name="type" id="type">
+								<option value="import">Import</option>
+								<option value="export">Export</option>
+							</select>
+						</div>
+						<div class="select">
 							Date:
 							<span>
 								<label for="date" onclick="handleDateFocus()"
@@ -70,6 +96,7 @@
 						<span>Tracking ID</span>
 						<span>AMOUNT</span>
 						<span>EST. DELIVERY DATE</span>
+						<span>STATUS</span>
 					</div>
 					<?php
 
@@ -81,13 +108,13 @@
 						$i = 0;
 						foreach($stmt as $row){
 							if ($row['status'] == 0) {
-							$status = '<span class="failed">Failed</span>';
+							$status = '<span class="status failed">Failed</span>';
 							}
 							if ($row['status'] == 1) {
-							$status = '<span class="success">Delivered</span>';
+							$status = '<span class="status success">Delivered</span>';
 							}
 							if ($row['status'] == 2) {
-							$status = '<span class="pending">In Transit</span>';
+							$status = '<span class="status pending">In Transit</span>';
 							}
 
 							$amount = $settings['currency'].''.number_format($row['amount'], 2);
@@ -101,7 +128,8 @@
 								<span>".$row['receiver_name']." <span>".$row['receiver_state']." ".$row['receiver_country']."</span></span>
 								<span>".$row['tracking_id']."</span>
 								<span>".$amount."</span>
-								<span>".$row['date_delivered']." ".$status." </span>
+								<span>".$row['date_delivered']."</span>
+								<span>".$status."</span>
 							</div>
 							";
 							}

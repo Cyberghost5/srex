@@ -12,7 +12,6 @@ $trx_ref = "TRX".time();
 
 if(isset($_GET['return'])){
 	$return = $_GET['return'];
-
 }
 else{
 	$return = 'register';
@@ -48,8 +47,9 @@ if(isset($_POST['index'])){
 	$numberCon = preg_match('@[0-9]@', $password);
 	$specialCon = preg_match('@[^\w]@', $password);
 
-	if(!$uppercaseCon || !$lowercaseCon || !$numberCon || !$specialCon || strlen($password) < 8){
-		$_SESSION['error'] = 'Password should be at least 8 characters in length and should include at lease one uppercase, one lowercase, one number, and one special character';
+	if(strlen($password) < 8){
+		// if(!$uppercaseCon || !$lowercaseCon || !$numberCon || !$specialCon || strlen($password) < 8){
+		$_SESSION['error'] = 'Password should be at least 8 characters in length!';
 		echo "<script>window.location.assign('$link')</script>";
 	}
 	else{
@@ -182,7 +182,7 @@ if(isset($_POST['index'])){
 					      <tr>
 					        <td style='text-align:center;'>
 					          <a href='".$settings['site_url']."' title='logo' target='_blank'>
-					            <img width='300' src='".$settings['site_url']."assets/images/".$settings['logo_line']."'>
+					            <img width='150' src='".$settings['site_url']."assets/images/".$settings['logo_line']."'>
 					          </a>
 					        </td>
 					      </tr>
@@ -207,7 +207,7 @@ if(isset($_POST['index'])){
 					                	</p>
 
 					                <a href='".$settings['site_url']."activate?code=".$code."&user=".$userid."'
-					                style='background:#ffac2e;text-decoration:none !important; display:inline-block; font-weight:500; margin-top:24px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;'>Activate Your Account</a>
+					                style='background:#13293d;text-decoration:none !important; display:inline-block; font-weight:500; margin-top:24px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;'>Activate Your Account</a>
 					              </td>
 					            </tr>
 					            <tr>
@@ -250,13 +250,13 @@ if(isset($_POST['index'])){
 						$mail->setFrom($email_from, $settings['site_name']);
 
 						//Recipients
-						$mail->addAddress($settings['admin_email'], 'New Signup');
-						$mail->addAddress($email, $firstname);
+						// $mail->addAddress($settings['admin_email'], 'New Signup');
+						$mail->addAddress($email, $settings['site_name .'].' New Signup');
 						$mail->addReplyTo($email_reply, $settings['site_name']);
 
 						//Content
 						$mail->isHTML(true);
-						$mail->Subject = "".$settings['site_name']." Sign Up";
+						$mail->Subject = $settings['site_name']." Sign Up";
 						$mail->Body    = $message;
 
 						$mail->send();
@@ -285,7 +285,7 @@ if(isset($_POST['index'])){
 
 			}else{
 				// echo "$link";
-				$_SESSION['error'] = "Opps, an error occcured. Try again later.";
+				$_SESSION['error'] = 'Opps, an error occcured. Try again later.';
 				echo "<script>window.location.assign('$link')</script>";
 			}
 
