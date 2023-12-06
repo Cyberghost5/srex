@@ -47,24 +47,24 @@
           Wallet
         </a>
       </li>
-      <li>
+      <!-- <li>
         <a href="./charges" <?php if ($filename == 'charges') {	echo "class='active'"; } ?>>
           <img src="<?php echo $settings['site_url']; ?>assets/images/wallet.svg" alt="" />
           Pending charges
         </a>
-      </li>
+      </li> -->
       <li>
         <a href="./address" <?php if ($filename == 'address') {	echo "class='active'"; } ?>>
           <img src="<?php echo $settings['site_url']; ?>assets/images/address.svg" alt="" />
           My addresses
         </a>
       </li>
-      <li>
+      <!-- <li>
         <a href="./invite" <?php if ($filename == 'invite') {	echo "class='active'"; } ?>>
           <img src="<?php echo $settings['site_url']; ?>assets/images/money.svg" alt="" />
           Invite & Earn
         </a>
-      </li>
+      </li> -->
       <li>
         <a href="./faq" <?php if ($filename == 'faq') {	echo "class='active'"; } ?>>
           <img src="<?php echo $settings['site_url']; ?>assets/images/faqs.svg" alt="" />

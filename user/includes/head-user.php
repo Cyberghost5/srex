@@ -18,7 +18,12 @@ $userfirstletter = substr($user['firstname'], 0, 1)
 			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>styles/alerts.css" />
 			<link rel="icon" href="<?php echo $settings['site_url']; ?>assets/images/favicon.png">
 			<!-- <script src="<?php echo $settings['site_url']; ?>scripts/dashboard.js" type="text/javascript" defer></script> -->
-			<script src="<?php echo $settings['site_url']; ?>scripts/dashboard1.js" type="text/javascript" defer></script>
+			<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+			<!-- SweetAlert2 -->
+			<script src="<?php echo $settings['site_url']; ?>assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+			<!-- Toastr -->
+			<script src="<?php echo $settings['site_url']; ?>assets/plugins/toastr/toastr.min.js"></script>
+			<script src="<?php echo $settings['site_url']; ?>user/includes/dashboard1.js" type="text/javascript" defer></script>
 			<script type="text/javascript">
 			const handleProfile = () => {
 				const body = document.querySelector('.main-body');
@@ -98,4 +103,10 @@ $userfirstletter = substr($user['firstname'], 0, 1)
 				</section>`;
 			};
 			</script>
+			<!-- SweetAlert2 -->
+			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+			<!-- Toastr -->
+			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>assets/plugins/toastr/toastr.min.css">
+			<!-- Theme style -->
+			<link rel="stylesheet" href="<?php echo $settings['site_url']; ?>styles/track.css" />
 		</head>

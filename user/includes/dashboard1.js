@@ -1,138 +1,9 @@
 const firstNameLetter = 'T';
-class SideBar extends HTMLElement {
-	constructor() {
-		super();
-	}
-
-	notificationLength = 5;
-
-	connectedCallback() {
-		// this.innerHTML = html`
-		this.innerHTML = String.raw`
-			<aside class="side-bar">
-				<a href="/" class="">
-					<h1 class="rubikEBold">SREX</h1>
-				</a>
-				<div class="bell">
-					<span>
-						<img src="./assets/images/bellMobile.svg" alt="" />
-						<small> ${this.notificationLength} </small>
-					</span>
-					<i class="fas fa-xmark" onclick="handleBars()"></i>
-				</div>
-				<div class="profile">
-					<div onclick="handleProfile()" class="img">${firstNameLetter}</div>
-					<div>
-						<h6>FirstName LastName</h6>
-						<small>See profile</small>
-					</div>
-				</div>
-				<nav>
-					<ul>
-						<li>
-							<a href="/dashboard.html">
-								<img src="./assets/images/dashboard.svg" alt="" color="red" />
-								Dashboard
-							</a>
-						</li>
-						<li>
-							<a href="/shipments.html">
-								<img src="./assets/images/shipments.svg" alt="" />
-								My shipments
-							</a>
-						</li>
-						<li>
-							<a href="/orders.html">
-								<img src="./assets/images/orders.svg" alt="" />
-								My orders
-							</a>
-						</li>
-						<li>
-							<a href="/wallet.html">
-								<img src="./assets/images/wallet.svg" alt="" />
-								Wallet
-							</a>
-						</li>
-						<li>
-							<a href="/charges.html">
-								<img src="./assets/images/wallet.svg" alt="" />
-								Pending charges
-							</a>
-						</li>
-						<li>
-							<a href="/address.html">
-								<img src="./assets/images/address.svg" alt="" />
-								My addresses
-							</a>
-						</li>
-						<!-- <li>
-							<a href="/invite.html">
-								<img src="./assets/images/money.svg" alt="" />
-								Invite & Earn
-							</a>
-						</li> -->
-						<li>
-							<a href="/faq.html">
-								<img src="./assets/images/faqs.svg" alt="" />
-								FAQs
-							</a>
-						</li>
-					</ul>
-				</nav>
-				<div class="logout">
-					<li>
-						<a href="./signin.html">
-							<img src="./assets/images/logout.svg" alt="" />
-							Log out
-						</a>
-					</li>
-				</div>
-			</aside>
-		`;
-	}
-}
-
-customElements.define('side-bar', SideBar);
-
-const sideLinks = document.querySelectorAll('.side-bar nav a');
-let activeLink;
-sideLinks.forEach(link => {
-	if (link.href.split('/').slice(-1)[0].includes(location.pathname.slice(1))) {
-		activeLink = link;
-	}
-});
-activeLink.classList.add('active');
-
-class Header extends HTMLElement {
-	constructor() {
-		super();
-	}
-	notificationLength = 5;
-	connectedCallback() {
-		// this.innerHTML = html`
-		this.innerHTML = String.raw`
-			<header class="top-bar">
-				<h1 class="rubikEBold">SREX</h1>
-				<h3>${activeLink.innerText}</h3>
-				<div class="bell">
-					<span>
-						<img src="./assets/images/bell.svg" alt="" />
-						<small> ${this.notificationLength} </small>
-					</span>
-					<div onclick="handleProfile()">${firstNameLetter}</div>
-				</div>
-				<i class="fas fa-bars" onclick="handleBars()"></i>
-			</header>
-		`;
-	}
-}
-
-customElements.define('header-bar', Header);
 
 const handleNavigate = route => {
 	switch (route) {
 		case 'shipments':
-			location.href = '../shipments.html';
+			location.href = './shipments';
 			break;
 
 		default:
@@ -176,15 +47,17 @@ const handleBars = () => {
 const handleMobileOverLay = () => {
 	handleBars();
 };
+
 let modalOpen = false;
 
 let isBookingDataComplete = false;
 let errorMessage = '';
 let bookingStep = 1;
-const balance = 5000;
+// const balance = 5000;
 const deliveryOptions = [
 	{type: 'normal', amount: 5000, periodInDays: 5},
 	{type: 'express', amount: 15000, periodInDays: 3},
+	{type: 'air', amount: 1000, periodInDays: 2},
 ];
 let shipmentData = {
 	type: '',
@@ -194,6 +67,11 @@ let shipmentData = {
 	receiverDetails: {},
 	item: {},
 	delivery: {},
+	senderDetails: null,
+	receiverDetails: null,
+	item: null,
+	delivery: null,
+	paymentMethod: '',
 };
 
 const handleModal = () => {
@@ -290,6 +168,7 @@ const handleShippingMethodSelect = selected => {
 		dateButton.classList.add('hide');
 		shipmentData.method = selected;
 	} else {
+		continueButton.classList.add('hide');
 		shipmentData.method = selected;
 	}
 
@@ -314,7 +193,8 @@ const handleNextStep = step => {
 	handleShipmentBook();
 };
 
-const handleUserDetails = type => {
+
+const handleUserDetails = (type, backClicked) => {
 	// Array of input IDs
 
 	const inputIds = [
@@ -333,6 +213,19 @@ const handleUserDetails = type => {
 		'quantity',
 		'weight',
 	];
+	if (shipmentData[type] && backClicked) {
+		return inputIds.forEach(id => {
+			const element = document.getElementById(id);
+			// For checkbox inputs, store their checked status'
+			if (element) {
+				if (element.type === 'checkbox') {
+					element.checked = shipmentData[type][id];
+				} else {
+					element.value = shipmentData[type][id];
+				}
+			}
+		});
+	}
 
 	// Object to store form data
 	const formData = {};
@@ -408,15 +301,83 @@ const handlePay = () => {
 	handleSubmit();
 };
 
+window.start_load = function(){
+	$('body').prepend('<div id="preloader2"></div>')
+}
+window.end_load = function(){
+	$('#preloader2').fadeOut('fast', function() {
+		$(this).remove();
+	})
+}
+window.alert_toast= function($msg = 'TEST',$bg = 'success' ,$pos=''){
+	var Toast = Swal.mixin({
+	toast: true,
+	position: $pos || 'top-end',
+	showConfirmButton: false,
+	timer: 5000
+	});
+	Toast.fire({
+		icon: $bg,
+		title: $msg
+	})
+}
+
+
 const handleSubmit = () => {
 	// JSON Data for backend server
 	const backendData = JSON.stringify(shipmentData);
+	start_load()
 	console.log(backendData);
+
+	// Start ajax request for sending data here
+	if(backendData == ''){
+		alert_toast("An Error Occured!",'error')
+		end_load()
+	}else{
+		$.ajax({
+			url:'ajax.php?action=shipping_prepare',
+			// url:'test.php',
+			method:'POST',
+			data:{backendata:backendData},
+			error:err=>{
+				console.log(err)
+				alert_toast("An error occured",'error')
+				end_load()
+			},
+			success:function(resp){
+
+				console.log(resp);
+
+				// if(typeof resp === 'object' || Array.isArray(resp) || typeof JSON.parse(resp) === 'object'){
+				// 	resp = JSON.parse(resp)
+				// 	if(Object.keys(resp).length > 0){
+				// 		$('#parcel_history').html('')
+				// 		Object.keys(resp).map(function(k){
+				// 			var tl = $('#clone_timeline-item .iitem').clone()
+				// 			tl.find('.dtime').text(resp[k].date_created)
+				// 			tl.find('.timeline-body').text(resp[k].status)
+				// 			tl.find('.other').text(resp[k].comment)
+				// 			$('#parcel_history').append(tl)
+				// 		})
+				// 	}
+				// }else if(resp == 2){
+				// 	alert_toast('Tracking Number not found!', 'error')
+				// 	end_load()
+				// }else{
+				// 	alert_toast(resp, 'error')
+				// 	end_load()
+				// }
+			},
+			complete:function(){
+				end_load()
+			}
+		})
+	}
 
 	// Show payment success screen might need to be delayed until booking is successful on the backend
 	const overlay = document.querySelector('.overlay');
 
-	isBookingDataComplete = true;
+	// isBookingDataComplete = true;
 	if (isBookingDataComplete) {
 		return (overlay.innerHTML = String.raw`
 			<section class="overlay">
@@ -458,7 +419,54 @@ const handleSubmit = () => {
 	}
 };
 
+
 const handleShipmentBook = () => {
+
+	// Use AJAX to get balance and delivery option
+	function getCookie(cname) {
+		let name = cname + "=";
+		let decodedCookie = decodeURIComponent(document.cookie);
+		let ca = decodedCookie.split(';');
+		for(let i = 0; i < ca.length; i++) {
+			let c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+	let user_username = getCookie("username");
+	// console.log(user_username)
+	let globalBalance; // Declare a global variable to store the balance
+
+	function getUserBalance(user_username) {
+	return new Promise((resolve, reject) => {
+		$.ajax({
+		url: 'ajax.php?action=get_user_balance',
+		method: 'POST',
+		data: { username: user_username },
+		error: reject,
+		success: resolve,
+		complete: function () {},
+		});
+	});
+	}
+
+	// Now you can use it like this:
+
+	getUserBalance(user_username).then(function (user_bal) {
+		globalBalance = user_bal; // Store the balance in the global variable
+		// console.log(globalBalance);
+		useBalanceInOtherFunction();
+	})
+	.catch(function (err) {
+		console.log(err);
+	});
+
+	function useBalanceInOtherFunction() {
 	!modalOpen && handleModal();
 	modalOpen = true;
 	if (isBookingDataComplete) return;
@@ -486,10 +494,11 @@ const handleShipmentBook = () => {
 					Continue
 				</button>
 			`;
-			break;
+			// break;
+			shipmentData.type && handleShippingTypeSelect(shipmentData.type);
 			break;
 		case 2:
-			let selectDate;
+			// let selectDate;
 			modalTitle.textContent = 'Choose a shipment method';
 			modalBody.innerHTML = String.raw`
 				<section>
@@ -502,7 +511,7 @@ const handleShipmentBook = () => {
 						<p>A dispatch rider will pick up your parcel at your location</p>
 					</button>
 					<button class="date hide">
-						<h4><label htmlFor="date"> Select pickup date </label></h4>
+						<h4><label for="date"> Select pickup date </label></h4>
 						<input
 							type="date"
 							name="pickup_date"
@@ -515,6 +524,7 @@ const handleShipmentBook = () => {
 					Continue
 				</button>
 			`;
+			shipmentData.method && handleShippingMethodSelect(shipmentData.method);
 			break;
 		case 3:
 			modalTitle.textContent = 'Choose your destination option';
@@ -533,6 +543,8 @@ const handleShipmentBook = () => {
 					Continue
 				</button>
 			`;
+			shipmentData.destinationOption &&
+				handleShippingDestinationSelect(shipmentData.destinationOption);
 			break;
 		case 4:
 			modalTitle.textContent = 'Input sender details';
@@ -540,40 +552,40 @@ const handleShipmentBook = () => {
 			modalBody.innerHTML = String.raw`
 				<form>
 					<div>
-						<label htmlFor="name">Full name</label>
+						<label for="name">Full name</label>
 						<input type="text" name="name" id="name" required />
 					</div>
 					<div>
-						<label htmlFor="email">Email address</label>
+						<label for="email">Email address</label>
 						<input type="email" name="email" id="email" required />
 					</div>
 					<div>
-						<label htmlFor="phone">Phone number</label>
+						<label for="phone">Phone number</label>
 						<input type="tel" name="phone" id="phone" required />
 					</div>
 					<div>
-						<label htmlFor="address">Address</label>
+						<label for="address">Address</label>
 						<input type="text" name="address" id="address" required />
 					</div>
 					<div>
-						<label htmlFor="postal">Postal Code</label>
+						<label for="postal">Postal Code</label>
 						<input type="text" name="postal" id="postal" required />
 					</div>
 					<div>
-						<label htmlFor="city">City</label>
+						<label for="city">City</label>
 						<input type="text" name="city" id="city" required />
 					</div>
 					<div>
-						<label htmlFor="state">State</label>
+						<label for="state">State</label>
 						<input type="text" name="state" id="state" required />
 					</div>
 					<div>
-						<label htmlFor="country">Country</label>
+						<label for="country">Country</label>
 						<input type="text" name="country" id="country" required />
 					</div>
 					<span>
 						<input type="checkbox" name="save" id="save" />
-						<label htmlFor="save">Save address</label>
+						<label for="save">Save address</label>
 					</span>
 					<small id="errorMessage"></small>
 					<button
@@ -585,6 +597,8 @@ const handleShipmentBook = () => {
 					</button>
 				</form>
 			`;
+			shipmentData.senderDetails &&
+				handleUserDetails('senderDetails', 'backClicked');
 			break;
 		case 5:
 			modalTitle.textContent = 'Input receiver details';
@@ -592,40 +606,40 @@ const handleShipmentBook = () => {
 			modalBody.innerHTML = String.raw`
 				<form>
 					<div>
-						<label htmlFor="name">Full name</label>
+						<label for="name">Full name</label>
 						<input type="text" name="name" id="name" required />
 					</div>
 					<div>
-						<label htmlFor="email">Email address</label>
+						<label for="email">Email address</label>
 						<input type="email" name="email" id="email" required />
 					</div>
 					<div>
-						<label htmlFor="phone">Phone number</label>
+						<label for="phone">Phone number</label>
 						<input type="tel" name="phone" id="phone" required />
 					</div>
 					<div>
-						<label htmlFor="address">Address</label>
+						<label for="address">Address</label>
 						<input type="text" name="address" id="address" required />
 					</div>
 					<div>
-						<label htmlFor="postal">Postal Code</label>
+						<label for="postal">Postal Code</label>
 						<input type="text" name="postal" id="postal" required />
 					</div>
 					<div>
-						<label htmlFor="city">City</label>
+						<label for="city">City</label>
 						<input type="text" name="city" id="city" required />
 					</div>
 					<div>
-						<label htmlFor="state">State</label>
+						<label for="state">State</label>
 						<input type="text" name="state" id="state" required />
 					</div>
 					<div>
-						<label htmlFor="country">Country</label>
+						<label for="country">Country</label>
 						<input type="text" name="country" id="country" required />
 					</div>
 					<span>
 						<input type="checkbox" name="save" id="save" />
-						<label htmlFor="save">Save address</label>
+						<label for="save">Save address</label>
 					</span>
 					<small id="errorMessage"></small>
 					<button
@@ -637,6 +651,8 @@ const handleShipmentBook = () => {
 					</button>
 				</form>
 			`;
+			shipmentData.receiverDetails &&
+				handleUserDetails('receiverDetails', 'backClicked');
 			break;
 		case 6:
 			modalTitle.textContent = 'Input item description';
@@ -644,7 +660,7 @@ const handleShipmentBook = () => {
 			modalBody.innerHTML = String.raw`
 				<form class="desc">
 					<div>
-						<label htmlFor="category">Select item category</label>
+						<label for="category">Select item category</label>
 						<select name="category" id="category" required>
 							<option value="books">Books</option>
 							<option value="gadgets">Gadgets</option>
@@ -652,11 +668,11 @@ const handleShipmentBook = () => {
 						</select>
 					</div>
 					<div>
-						<label htmlFor="value">Item value (N)</label>
+						<label for="value">Item value (N)</label>
 						<input type="number" name="value" id="value" required />
 					</div>
 					<div>
-						<label htmlFor="desc">Detailed item description</label>
+						<label for="desc">Detailed item description</label>
 						<textarea
 							name="desc"
 							id="desc"
@@ -667,11 +683,11 @@ const handleShipmentBook = () => {
 						></textarea>
 					</div>
 					<div>
-						<label htmlFor="quantity">Quantity</label>
+						<label for="quantity">Quantity</label>
 						<input type="number" name="quantity" id="quantity" required />
 					</div>
 					<div>
-						<label htmlFor="weight">Weight (KG)</label>
+						<label for="weight">Weight (KG)</label>
 						<input type="number" name="weight" id="weight" required />
 					</div>
 					<small id="errorMessage"></small>
@@ -684,6 +700,7 @@ const handleShipmentBook = () => {
 					</button>
 				</form>
 			`;
+			shipmentData.item && handleUserDetails('item', 'backClicked');
 			break;
 		case 7:
 			modalTitle.textContent = 'Delivery option';
@@ -773,6 +790,7 @@ const handleShipmentBook = () => {
 
 		case 9:
 			modalTitle.textContent = 'Payment';
+			 
 
 			modalBody.innerHTML = String.raw`
 
@@ -780,18 +798,20 @@ const handleShipmentBook = () => {
 						<div>
 
 							<h3>Pay from wallet</h3>
-							<p>Your balance is ₦${balance.toLocaleString()}</p>
-							<button class="button">Fund Wallet</button>
+							<p>Your balance is ₦${
+								globalBalance.toLocaleString()
+							}</p>
+							<button class="button" onclick="handleWalletFunding()">Fund Wallet</button>
 						</div>
 						<img src="../assets/images/select.svg" />
 				</div>
-			<div class="deliverOption" id="card">
+			<!-- <div class="deliverOption" id="card">
 						<div>
 							<h3>Pay with card</h3>
 							<button class="button">Add new card</button>
 						</div>
 						<img src="../assets/images/select.svg" />
-				</div>
+				</div> -->
 				<div class="deliverButton hide" onclick="handlePay()">
 							<button class="button ">Make Payment</button>
 						</div>
@@ -800,11 +820,11 @@ const handleShipmentBook = () => {
 			const rerenderElement = paymentType => {
 				const deliverOption = document.querySelector(`#${paymentType}`);
 				const imgElement = deliverOption.querySelector('img');
-				shipmentData.paymentType = paymentType;
+				shipmentData.paymentMethod = paymentType;
 				document
 					.querySelectorAll('.deliverOption img')
 					.forEach(option => (option.src = '../assets/images/select.svg'));
-				if (shipmentData?.paymentType === paymentType) {
+					if (shipmentData?.paymentMethod === paymentType) {
 					imgElement.src = '../assets/images/selected.svg';
 				} else {
 					imgElement.src = '../assets/images/select.svg';
@@ -821,15 +841,17 @@ const handleShipmentBook = () => {
 					rerenderElement(paymentType); // Pass the extracted paymentType to rerenderElement
 				});
 			});
+			shipmentData.paymentMethod && rerenderElement(shipmentData.paymentMethod);
 			break;
 		default:
 			modalTitle.textContent = 'Book a shipment';
 			modalBody.innerHTML = '';
 			break;
 	}
+	}
 };
 
-handleShipmentBook();
+// handleShipmentBook();
 const handleOverlay = () => {
 	const overlay = document.querySelector('.overlay');
 	modalOpen = false;
@@ -839,83 +861,4 @@ const handleOverlay = () => {
 	isBookingDataComplete = false;
 };
 
-const handleProfile = () => {
-	const body = document.querySelector('.main-body');
-	body.innerHTML += String.raw` <section class="overlay">
-		<aside class="right-bar">
-			<div class="icon-container">
-				<h2>Profile</h2>
-				<svg
-					width="24"
-					height="24"
-					viewBox="0 0 24 24"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-					onclick="handleOverlay()"
-				>
-					<g clip-path="url(#clip0_457_474)">
-						<path
-							d="M0 0L24 24M0 24L24 0"
-							stroke="black"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-					</g>
-					<defs>
-						<clipPath id="clip0_457_474">
-							<rect width="24" height="24" fill="white" />
-						</clipPath>
-					</defs>
-				</svg>
-			</div>
-
-			<div class="icon-container">
-				<span class="icon"> ${firstNameLetter} </span>
-				<h4>FirstName LastName</h4>
-			</div>
-			<form action="">
-				<label htmlFor="email">Email address</label>
-				<input
-					type="email"
-					name="email"
-					id="email"
-					placeholder="srexuser@gmail.com"
-				/>
-				<label htmlFor="email">Phone number</label>
-				<input
-					type="tel"
-					name="phone"
-					id="phone"
-					placeholder="+2349087392038"
-				/>
-				<label>Account type</label>
-				<div>
-					<span>
-						<label htmlFor="personal">
-							<input type="radio" name="accountType" id="personal" />
-							Personal</label
-						>
-					</span>
-					<span>
-						<label htmlFor="business">
-							<input type="radio" name="accountType" id="business" />
-							Business</label
-						>
-					</span>
-				</div>
-				<label htmlFor="email">Password</label>
-				<input
-					type="password"
-					name="password"
-					id="password"
-					placeholder="****************"
-				/>
-				<span>Change Password</span>
-
-				<button class="button">Save</button>
-			</form>
-			<div></div>
-		</aside>
-	</section>`;
-};
+// handleShipmentBook();

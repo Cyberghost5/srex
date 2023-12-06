@@ -1,1 +1,0 @@
-if (location.pathname.includes);

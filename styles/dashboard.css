@@ -410,7 +410,7 @@ header-bar {
 
 	& > span:last-of-type {
 		display: flex;
-		justify-content: center;
+		/* justify-content: center; */
 	}
 	& small {
 		display: none;
@@ -698,6 +698,7 @@ header-bar {
 		}
 		> div:nth-child(1),
 		> div:nth-child(4),
+		> small,
 		> button {
 			grid-column: 1/-1;
 		}
@@ -707,8 +708,12 @@ header-bar {
 			align-items: center;
 			gap: 5px;
 		}
+
+		& > small {
+			color: red;
+		}
 	}
-	.desc {
+	& .desc {
 		> div:nth-child(1),
 		> div:nth-child(4),
 		> button {
@@ -729,12 +734,157 @@ header-bar {
 			min-height: 50px;
 		}
 	}
+	& .deliverOption {
+		display: flex;
+		gap: 50px;
+		width: 350px;
+		background-color: #edeff1;
+		padding: 20px;
+		justify-content: space-between;
+		align-items: flex-start;
+		border-radius: 5px;
+		border: 2px solid #edeff1;
+
+		& div {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+		& h3 {
+			font-family: kanitRegular;
+			text-transform: capitalize;
+		}
+		& p {
+			font-family: rubikRegular;
+		}
+	}
+	& .deliverOption:hover {
+		border: 2px solid #cb2449;
+	}
+	& .deliverButton {
+		max-width: 500px;
+		width: 100%;
+		margin: auto;
+	}
+
+	& .summary {
+		& > div {
+			display: flex;
+			gap: 15px;
+			& > div {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: flex-start;
+				gap: 5px;
+				& .red {
+					background-color: #cb2449;
+					width: 24px;
+					height: 24px;
+					display: flex;
+					border-radius: 50%;
+					margin-top: 5px;
+				}
+				& img {
+					width: 10px;
+					height: 150px;
+				}
+				& .green {
+					background-color: #6eca97;
+					width: 24px;
+					height: 24px;
+					display: flex;
+					border-radius: 50%;
+				}
+			}
+			& > div:nth-child(2) {
+				align-items: flex-start;
+				gap: 20px;
+				flex: 1;
+
+				& > div {
+					height: 165px;
+					display: flex;
+					justify-content: space-between;
+					align-items: flex-start;
+					width: 100%;
+
+					& span {
+						border-radius: 17px;
+						background: rgba(203, 36, 73, 0.2);
+						color: #cb2449;
+						padding: 8px 16px;
+						cursor: pointer;
+					}
+				}
+				& h4 {
+					font-family: kanitLight;
+				}
+
+				& p {
+					font-family: rubikRegular;
+					margin-top: 8px;
+					font-size: 1.1rem;
+				}
+			}
+		}
+	}
+
+	& .payment {
+		display: flex;
+		flex-direction: column;
+		gap: 50px;
+	}
 }
 
 .modal::-webkit-scrollbar-thumb {
 	background: red;
 	border-radius: 50px;
 }
+
+.modalComplete {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 30px;
+	position: relative;
+	height: 500px;
+	min-height: 500px;
+	animation: modalComplete 1s ease-out;
+
+	& .modalHeader {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		position: absolute;
+		right: 20px;
+		top: 20px;
+
+		& .modalTitle {
+			font-family: kanitRegular;
+			font-size: 1.25rem;
+		}
+
+		& svg {
+			cursor: pointer;
+		}
+	}
+
+	& .button {
+		max-width: 400px;
+	}
+}
+
+@keyframes modalComplete {
+	from {
+		transform: scale(0.5);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
 .wallet {
 	& .card {
 		width: 566px;
@@ -1204,7 +1354,8 @@ header-bar {
 		bottom: 0;
 
 		& svg {
-			display: none;
+			width: 15px;
+			height: 15px;
 		}
 
 		& .modalBody {
@@ -1213,6 +1364,9 @@ header-bar {
 			& > section {
 				gap: 20px;
 			}
+		}
+		& .deliverOption:hover {
+			border: 0 solid #edeff1;
 		}
 	}
 	.wallet {

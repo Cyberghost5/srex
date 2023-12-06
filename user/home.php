@@ -18,7 +18,11 @@
 						</div>
 						<div class="sub-grid-content">
 							<span> You have made </span>
-							<h3><?php echo $total_shipment['numrows'] ?> shipments</h3>
+							<?php if($total_shipment['numrows'] == 1): ?>
+							<h3><?php echo $total_shipment['numrows'] ?> Shipment</h3>
+							<?php else: ?>
+							<h3><?php echo $total_shipment['numrows'] ?> Shipments</h3>
+							<?php endif; ?>
 						</div>
 						<div class="grid-right right1">
 							<?php echo date('M');?> 2023
