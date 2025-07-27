@@ -105,6 +105,9 @@ if(isset($_SESSION['username'])){
 Don't have an account?
 <a href="./register"> Sign up </a>
 </span>
+<button type="button" class="button button-google" onclick="window.location.assign('google_login');">
+	<i class="fab fa-google"></i> Sign in with Google
+</button>
 <span class="dont">
 Are you a driver?
 <a href="./driver-login"> Login here </a>
