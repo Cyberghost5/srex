@@ -64,7 +64,7 @@ Class Action {
 		// return $username;
 	}
 
-	function shipping_prepare(){
+	function shipping_prepare_old(){
 		extract($_POST);
 		// Access the 'backendata' value
         $backendataValue = $_POST['backendata'];
@@ -125,7 +125,15 @@ Class Action {
 		$pay_type = "Shipments";
 		$userid = 184; // Change later
 		$amountPaid = 5000; // Change later 
-	
+
+
+		// Things to do here
+		// 1. Deduct user balance and also throw error if the balance is insufficient
+		// 2. Create a new shipment record
+		// 3. Create a new transaction record
+		// 4. Send a confirmation email to the user
+		// 5. Verify that the address is not the same
+
 		// Check if parcel already exists
 		$check_query = "SELECT COUNT(*) as count FROM shippments WHERE sender_name = '$senderName' AND receiver_name = '$receiverName'";
 		$check_result = $this->db->query($check_query);
@@ -135,7 +143,7 @@ Class Action {
 			
 			if ($count > 0) {
 				// Parcel already exists, return an error response
-				$response = array('status' => 'error', 'message' => 'Shippment already exist.');
+				$response = array('status' => 'error', 'message' => 'Shippment already exist.', 'fullResponse' => $data);
 			} else {
 				// Parcel does not exist, proceed with the insert query
 				// $insert_query = "INSERT INTO parcels (sender_name, recipient_name, status, price) VALUES ('$sender_name', '$recipient_name', '$status', '$price')";
@@ -156,7 +164,187 @@ Class Action {
 		}
 	
 		return json_encode($response);
+		exit;
 	}
+
+	function shipping_prepare()
+{
+    // Check if data is present and correctly structured
+    if (!isset($_POST['backendata'])) {
+        return json_encode(['status' => 'error', 'message' => 'Invalid request data.']);
+    }
+
+    // Decode the JSON data
+    $data = json_decode(stripslashes($_POST['backendata']), true);
+
+    if ($data === null) {
+        return json_encode(['status' => 'error', 'message' => 'Invalid JSON format.']);
+    }
+
+    // --- 1. Sanitize and Extract Input Data Safely ---
+    // It's safer to extract variables one by one rather than using extract()
+    $type = $data['type'] ?? null;
+    $method = $data['method'] ?? null;
+    $destinationOption = $data['destinationOption'] ?? null;
+
+    $senderDetails = $data['senderDetails'] ?? [];
+    $receiverDetails = $data['receiverDetails'] ?? [];
+    $item = $data['item'] ?? [];
+    $shippingRate = $data['shippingRate'] ?? [];
+    $paymentMethod = $data['paymentMethod'] ?? null;
+    $userid = $data['username'] ?? null; // Assuming userid is passed from the front end
+
+    // Check for essential data
+    if (!$userid || empty($senderDetails) || empty($receiverDetails) || empty($item) || empty($shippingRate) || empty($paymentMethod)) {
+        return json_encode(['status' => 'error', 'message' => 'Incomplete shipment data.']);
+    }
+
+    // --- 2. Verify that the address is not the same ---
+    if (
+        ($senderDetails['address'] === $receiverDetails['address']) &&
+        ($senderDetails['city'] === $receiverDetails['city']) &&
+        ($senderDetails['state'] === $receiverDetails['state']) &&
+        ($senderDetails['country'] === $receiverDetails['country'])
+    ) {
+        return json_encode(['status' => 'error', 'message' => 'Sender and receiver addresses cannot be the same.']);
+    }
+
+    // --- 3. Generate Unique IDs ---
+    $num = '123456789';
+    $upp = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $set1 = substr(str_shuffle($upp), 0, 3);
+    $set2 = substr(str_shuffle($upp), 0, 1);
+    $set3 = substr(str_shuffle($num), 0, 3);
+    $set4 = substr(str_shuffle($upp), 0, 1);
+
+    $ref_id = 'O' . $set1 . '-' . $set2 . $set3 . $set4 . '-' . time();
+    $trx_id = "TRX" . time();
+    $pay_type = "Shipments";
+    $amountPaid = $shippingRate['amount'];
+
+    // --- 4. Begin Database Transaction ---
+    $this->db->begin_transaction();
+
+    try {
+        // --- 5. Deduct user balance and check for insufficiency ---
+        $stmt_balance_check = $this->db->prepare("SELECT balance FROM users WHERE username = ?");
+        $stmt_balance_check->bind_param("s", $userid);
+        $stmt_balance_check->execute();
+        $result = $stmt_balance_check->get_result();
+
+        if ($result->num_rows === 0) {
+            throw new Exception("User not found.");
+        }
+
+        $user = $result->fetch_assoc();
+        $currentBalance = $user['balance'];
+        $stmt_balance_check->close();
+
+        if ($currentBalance < $amountPaid) {
+            throw new Exception("Insufficient balance to complete this transaction.");
+        }
+
+        $stmt_balance_update = $this->db->prepare("UPDATE users SET balance = balance - ? WHERE username = ?");
+        $stmt_balance_update->bind_param("ds", $amountPaid, $userid);
+        if (!$stmt_balance_update->execute()) {
+            throw new Exception("Failed to update user balance.");
+        }
+        $stmt_balance_update->close();
+
+        // --- 6. Create a new shipment record (using prepared statements) ---
+        $insert_shipment_query = "INSERT INTO shippments (userid, trx_id, ref_id, delivery_type, delivery_method, destination_option, sender_name, sender_email, sender_phone, sender_address, sender_postal_code, sender_city, sender_state, sender_country, save_sender_details, receiver_name, receiver_email, receiver_phone, receiver_address, receiver_postal_code, receiver_city, receiver_state, receiver_country, save_receiver_details, item_category, item_value, item_description, item_quantity, item_weight, payment_method, shipping_rate_type, shipping_rate_amount, shipping_rate_period) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt_shipment = $this->db->prepare($insert_shipment_query);
+        $stmt_shipment->bind_param(
+            "sssssssssssssssssssssssssssssssss",
+            $userid,
+            $trx_id,
+            $ref_id,
+            $type,
+            $method,
+            $destinationOption,
+            $senderDetails['name'],
+            $senderDetails['email'],
+            $senderDetails['phone'],
+            $senderDetails['address'],
+            $senderDetails['postal'],
+            $senderDetails['city'],
+            $senderDetails['state'],
+            $senderDetails['country'],
+            $senderDetails['save'],
+            $receiverDetails['name'],
+            $receiverDetails['email'],
+            $receiverDetails['phone'],
+            $receiverDetails['address'],
+            $receiverDetails['postal'],
+            $receiverDetails['city'],
+            $receiverDetails['state'],
+            $receiverDetails['country'],
+            $receiverDetails['save'],
+            $item['category'],
+            $item['value'],
+            $item['desc'],
+            $item['quantity'],
+            $item['weight'],
+            $paymentMethod,
+            $shippingRate['type'],
+            $amountPaid,
+            $shippingRate['periodInDays']
+        );
+        
+        if (!$stmt_shipment->execute()) {
+            throw new Exception("Failed to create shipment record.");
+        }
+        $stmt_shipment->close();
+
+        // --- 7. Create a new transaction record (using prepared statements) ---
+        $insert_transaction_query = "INSERT INTO transaction_all (userid, trxid, amount, type, status) VALUES (?, ?, ?, ?, '1')";
+        $stmt_transaction = $this->db->prepare($insert_transaction_query);
+        $stmt_transaction->bind_param("ssds", $userid, $trx_id, $amountPaid, $pay_type);
+        if (!$stmt_transaction->execute()) {
+            throw new Exception("Failed to create transaction record.");
+        }
+        $stmt_transaction->close();
+
+        // If all queries were successful, commit the transaction
+        $this->db->commit();
+        
+        // --- 8. Send a confirmation email to the user ---
+        $to = $senderDetails['email'];
+        $subject = "Shipment Confirmation - Reference ID: " . $ref_id;
+        $message = "
+        <html>
+        <head>
+          <title>Shipment Confirmation</title>
+        </head>
+        <body>
+          <h2>Dear " . $senderDetails['name'] . ",</h2>
+          <p>Your shipment with Reference ID: <strong>" . $ref_id . "</strong> has been successfully booked.</p>
+          <p><strong>Shipment Details:</strong></p>
+          <ul>
+            <li><strong>From:</strong> " . $senderDetails['address'] . ", " . $senderDetails['city'] . "</li>
+            <li><strong>To:</strong> " . $receiverDetails['address'] . ", " . $receiverDetails['city'] . "</li>
+            <li><strong>Item:</strong> " . $item['desc'] . " (" . $item['quantity'] . ")</li>
+            <li><strong>Total Paid:</strong> NGN " . number_format($amountPaid) . "</li>
+          </ul>
+          <p>Thank you for using our service.</p>
+        </body>
+        </html>
+        ";
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "From: no-reply@yourcompany.com" . "\r\n";
+
+        // mail($to, $subject, $message, $headers); // Uncomment this line to enable email sending
+
+        return json_encode(['status' => 'success', 'message' => 'Shipment booked successfully.', 'ref_id' => $ref_id]);
+    } catch (Exception $e) {
+        $this->db->rollback();
+        return json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+}
+
 	
 
 	function get_shipping_plans(){

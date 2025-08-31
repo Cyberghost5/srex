@@ -11,13 +11,13 @@ const handleNavigate = route => {
 	}
 };
 
-const handleActiveShipment = selected => {
-	const tabs = document.querySelectorAll('.shipment header button');
-	tabs.forEach(
-		tab => tab.classList.contains('active') && tab.classList.remove('active')
-	);
-	event.target.classList.add('active');
-};
+// const handleActiveShipment = selected => {
+// 	const tabs = document.querySelectorAll('.shipment header button');
+// 	tabs.forEach(
+// 		tab => tab.classList.contains('active') && tab.classList.remove('active')
+// 	);
+// 	event.target.classList.add('active');
+// };
 
 const handleActiveTransactions = selected => {
 	const tabs = document.querySelectorAll('.wallet header button');
@@ -66,7 +66,7 @@ let shipmentData = {
 	senderDetails: null,
 	receiverDetails: null,
 	item: null,
-	delivery: null,
+	username: null,
 	paymentMethod: '',
 };
 
@@ -256,25 +256,33 @@ const handleUserDetails = (type, backClicked) => {
 	handleNextStep(bookingStep);
 };
 
+// let deliveryOptions = [];
+
 $.ajax({
-	url: 'ajax.php?action=get_delivery_options',
-	method: 'GET',
-	error: function() {},
-	success:function(resp){
-		if(typeof resp === 'object' || Array.isArray(resp) || typeof JSON.parse(resp) === 'object'){
-			resp = JSON.parse(resp)
-			if(Object.keys(resp).length > 0){
-				Object.keys(resp).map(function(k){
-					// console.log(resp[k].type);
-					const deliveryOptions = [
-						{'type': resp[k].type, 'amount': resp[k].amount, 'periodInDays': resp[k].periodInDays},
-					];
-				})
-			}
-		}
-	},
-	complete: function () {},
+    url: 'ajax.php?action=get_delivery_options',
+    method: 'GET',
+    dataType: 'json', // let jQuery auto-parse JSON
+    success: function(resp) {
+        if (resp && Object.keys(resp).length > 0) {
+            const deliveryOptions = [];
+
+            Object.keys(resp).forEach(function(k) {
+                deliveryOptions.push({
+                    type: resp[k].type,
+                    amount: resp[k].amount,
+                    periodInDays: resp[k].periodInDays
+                });
+            });
+
+            console.log(deliveryOptions); // ✅ usable array here
+        }
+    },
+    error: function(err) {
+        console.error("AJAX error:", err);
+    },
+    complete: function () {}
 });
+
 
 const deliveryOptions = [
 	{'type': 'normal', 'amount': 5000, 'periodInDays': 5},
@@ -287,7 +295,7 @@ const handleDeliveryOption = selected => {
 	);
 	const modalBody = document.querySelector('.modalBody');
 	modalBody.innerHTML = String.raw`
-		<h4>Choose a shipping rate</h4>
+		<h4>Choose a shipping rate1</h4>
 		${deliveryOptions
 			.map(
 				option => String.raw`<div class="deliverOption" onclick="handleDeliveryOption('${
@@ -299,9 +307,7 @@ const handleDeliveryOption = selected => {
 								
 								${option.type} Delivery
 							</h3>
-							<p>Delivery in ${option.periodInDays} business day${
-					option.periodInDays > 1 ? 's' : ''
-				} </p>
+							<p>Delivery in ${option.periodInDays} business days</p>
 					<h2>₦ ${option.amount.toLocaleString()}</h2>
 						</div>
 						${
@@ -315,7 +321,7 @@ const handleDeliveryOption = selected => {
 		<div class="deliverButton" onclick="handleNextStep(${bookingStep})">
 			<button class="button">Continue</button>
 		</div>
-// 	`;
+ 	`;
 };
 
 const handlePay = () => {
@@ -467,28 +473,19 @@ const handleShipmentBook = () => {
 	let globalBalance; // Declare a global variable to store the balance
 
 	function getUserBalance(user_username) {
-	return new Promise((resolve, reject) => {
-		$.ajax({
-		url: 'ajax.php?action=get_user_balance',
-		method: 'POST',
-		data: { username: user_username },
-		error: reject,
-		success: resolve,
-		complete: function () {},
+		return new Promise((resolve, reject) => {
+			$.ajax({
+			url: 'ajax.php?action=get_user_balance',
+			method: 'POST',
+			data: { username: user_username },
+			error: reject,
+			success: resolve,
+			complete: function () {},
+			});
 		});
-	});
 	}
 
-	getUserBalance(user_username).then(function (user_bal) {
-		globalBalance = user_bal; // Store the balance in the global variable
-		// console.log(globalBalance);
-		useBalanceInOtherFunction();
-	})
-	.catch(function (err) {
-		console.log(err);
-	});
-
-	function useBalanceInOtherFunction() {
+	// function useBalanceInOtherFunction() {
 	!modalOpen && handleModal();
 	modalOpen = true;
 	if (isBookingDataComplete) return;
@@ -507,7 +504,7 @@ const handleShipmentBook = () => {
 						<h4>Book an import</h4>
 						<p>Receive your packages from anywhere in the world</p>
 					</button>
-					<button onclick="handleShippingTypeSelect('shop&ship')">
+					<button onclick="handleShippingTypeSelect('shop&ship')" class="hide">
 						<h4>Shop and ship</h4>
 						<p>Shop and ship from our US and UK addresses</p>
 					</button>
@@ -556,7 +553,7 @@ const handleShipmentBook = () => {
 						<h4>Single destination delivery</h4>
 						<p>Deliver your parcels to one destination only</p>
 					</button>
-					<button onclick="handleShippingDestinationSelect('multiple')">
+					<button onclick="handleShippingDestinationSelect('multiple')" class="hide">
 						<h4>Multiple destinations</h4>
 						<p>Deliver your parcels to up to 4 destinations per booking</p>
 					</button>
@@ -805,7 +802,7 @@ const handleShipmentBook = () => {
 		case 7:
 			modalTitle.textContent = 'Delivery option';
 
-			modalBody.innerHTML = String.raw` <h4>Choose a shipping rate</h4> 
+			modalBody.innerHTML = String.raw` <h4>Choose a shipping rate2</h4> 
 			${deliveryOptions
 				.map(
 					option => String.raw`<div class="deliverOption" onclick="handleDeliveryOption('${
@@ -834,7 +831,7 @@ const handleShipmentBook = () => {
 					shipmentData?.shippingRate
 						? `
 						<div class="deliverButton" onclick="handleNextStep(${bookingStep})">
-							<button class="button ">Continue</button>
+							<button class="button">Continue</button>
 						</div>`
 						: `
 					''
@@ -889,65 +886,79 @@ const handleShipmentBook = () => {
 			break;
 		case 9:
 			modalTitle.textContent = 'Payment';
-			 
 
-			modalBody.innerHTML = String.raw`
+			getUserBalance(user_username)
+			.then(function (user_bal) {
+				globalBalance = user_bal; // or adjust to your API’s return
+				console.log("Balance set:", globalBalance);
 
-			<div class="deliverOption" id="wallet">
-						<div>
+				shipmentData.username = user_username;
 
-							<h3>Pay from wallet</h3>
-							<p>Your balance is ₦${
-								globalBalance.toLocaleString()
-							}</p>
-							<button class="button" onclick="handleWalletFunding()">Fund Wallet</button>
-						</div>
-						<img src="../assets/images/select.svg" />
-				</div>
-			<!-- <div class="deliverOption" id="card">
-						<div>
-							<h3>Pay with card</h3>
-							<button class="button">Add new card</button>
-						</div>
-						<img src="../assets/images/select.svg" />
-				</div> -->
-				<div class="deliverButton hide" onclick="handlePay()">
-							<button class="button">Make Payment</button>
-						</div>
-				`;
+				modalBody.innerHTML = String.raw`
 
-			const rerenderElement = paymentType => {
-				const deliverOption = document.querySelector(`#${paymentType}`);
-				const imgElement = deliverOption.querySelector('img');
-				shipmentData.paymentMethod = paymentType;
-				document
-					.querySelectorAll('.deliverOption img')
-					.forEach(option => (option.src = '../assets/images/select.svg'));
-					if (shipmentData?.paymentMethod === paymentType) {
-					imgElement.src = '../assets/images/selected.svg';
-				} else {
-					imgElement.src = '../assets/images/select.svg';
-				}
+				<div class="deliverOption" id="wallet">
+							<div>
 
-				document.querySelector('.deliverButton').classList.remove('hide');
-			};
+								<h3>Pay from wallet</h3>
+								<p>Your balance is ₦${
+									globalBalance ? parseFloat(globalBalance).toLocaleString() : '0'
+								}</p>
+								<button class="button" onclick="handleWalletFunding()">Fund Wallet</button>
+							</div>
+							<img src="../assets/images/select.svg" />
+					</div>
+				<!-- <div class="deliverOption" id="card">
+							<div>
+								<h3>Pay with card</h3>
+								<button class="button">Add new card</button>
+							</div>
+							<img src="../assets/images/select.svg" />
+					</div> -->
+					<div class="deliverButton hide" onclick="handlePay()">
+								<button class="button">Make Payment</button>
+							</div>
+					`;
 
-			// Attach the rerenderElement function to the onclick event
-			const deliverOptionElements = document.querySelectorAll('.deliverOption');
-			deliverOptionElements.forEach(element => {
-				element.addEventListener('click', function (event) {
-					const paymentType = event.currentTarget.id; // Get the id of the clicked element
-					rerenderElement(paymentType); // Pass the extracted paymentType to rerenderElement
+				const rerenderElement = paymentType => {
+					const deliverOption = document.querySelector(`#${paymentType}`);
+					const imgElement = deliverOption.querySelector('img');
+					shipmentData.paymentMethod = paymentType;
+					document
+						.querySelectorAll('.deliverOption img')
+						.forEach(option => (option.src = '../assets/images/select.svg'));
+						if (shipmentData?.paymentMethod === paymentType) {
+						imgElement.src = '../assets/images/selected.svg';
+					} else {
+						imgElement.src = '../assets/images/select.svg';
+					}
+
+					document.querySelector('.deliverButton').classList.remove('hide');
+				};
+
+				// Attach the rerenderElement function to the onclick event
+				const deliverOptionElements = document.querySelectorAll('.deliverOption');
+				deliverOptionElements.forEach(element => {
+					element.addEventListener('click', function (event) {
+						const paymentType = event.currentTarget.id; // Get the id of the clicked element
+						rerenderElement(paymentType); // Pass the extracted paymentType to rerenderElement
+					});
 				});
+				shipmentData.paymentMethod && rerenderElement(shipmentData.paymentMethod);
+
+				// Now call anything that needs the balance
+				// updateBalanceUI();
+			})
+			.catch(function (err) {
+				console.error("Error fetching balance:", err);
 			});
-			shipmentData.paymentMethod && rerenderElement(shipmentData.paymentMethod);
+
 			break;
 		default:
 			modalTitle.textContent = 'Book a shipment';
 			modalBody.innerHTML = '';
 			break;
 	}
-	}
+	// }
 };
 
 // handleShipmentBook();
